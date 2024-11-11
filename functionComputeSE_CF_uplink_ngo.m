@@ -67,14 +67,18 @@ prep = repmat(p',[L 1]);
 for k = 1:K
     
     %Add the last two terms of the denominator
+    %interference(k) に対して、ガンマ値に全APの送信電力とベータ値の合計を乗じた値とガンマ値自体の合計を加える．
+    %APからの干渉と環境からのその他の干渉の和になる
     interference(k) = interference(k) + sum(gammaVal(:,k).*sum(prep.*betaVal,2)) + sum(gammaVal(:,k));
     
     %Compute the first term with interference due to pilot contamination
+    %同じパイロットを使用するすべてのUEを識別する
     coPilot = (pilotIndex(k) == pilotIndex); %Extract UEs that use same pilot
     coPilot(k) = false; %Remove the UE of interest
     samePilot = find(coPilot);
     
     for ind = 1:length(samePilot)
+        %同じパイロットを使用する他のUEからの干渉の寄与を計算し,interference(k) に加える．
         interference(k) = interference(k) + p(samePilot(ind))*sum(gammaVal(:,k).*betaVal(:,samePilot(ind))./betaVal(:,k))^2;
     end
     

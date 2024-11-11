@@ -56,7 +56,7 @@ function [gainOverNoisedB,R,pilotIndexCF,pilotIndexSC,APpositions,UEpositions,di
 %Size of the coverage area (as a square with wrap-around)
 squareLength = 1000; %meter
 
-%Communication bandwidth
+% %Communication bandwidth
 B = 20e6;
 
 %Noise figure (in dB)

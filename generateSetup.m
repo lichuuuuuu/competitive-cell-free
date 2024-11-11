@@ -5,7 +5,7 @@ function [R_AP,R_BS,pilotIndex,BSassignment,gainOverNoisedB_AP,gainOverNoisedB_B
 %
 %Emil Bjornson, Luca Sanguinetti, "Making Cell-Free Massive MIMO
 %Competitive With MMSE Processing and Centralized Implementation,"
-%IEEE Transactions on Wireless Communications, To appear.
+%IEEE Transactions on Wireless Comnications, To appear.
 %
 %Download article: https://arxiv.org/abs/1903.10611
 %
@@ -21,6 +21,11 @@ function [R_AP,R_BS,pilotIndex,BSassignment,gainOverNoisedB_AP,gainOverNoisedB_B
 %N                  = Number of antennas per AP
 %M                  = Number of antennas per cellular BS
 %nbrOfSetups        = Number of setups with random UE locations
+% L                  = 16;
+% K                  = 40;
+% N                  = 8;
+% M                  = 32;
+% nbrOfSetups        = 10;
 %
 %OUTPUT:
 %R_AP               = Matrix with dimension N x N x L x K x nbrOfSetups
@@ -252,13 +257,16 @@ for n = 1:nbrOfSetups
     %Create correlated shadow fading realizations
     shadowAPrealizations = sqrtm(shadowCorrMatrix)*randn(K,L);
     
-    
+    file6 = 'UEpositions.csv'; %ファイル名
+    writematrix(UEpositions, file6);
     %Go through all UEs
     for k = 1:K
         
         %Compute distances assuming for the UE to the APs
         [distanceAPstoUE,whichpos] = min(abs(APpositionsWrapped - repmat(UEpositions(k),size(APpositionsWrapped))),[],2);
         distances = sqrt(distanceVertical^2+distanceAPstoUE.^2);
+        file5 = 'distances.csv'; %ファイル名
+        writematrix(distances, file5);
         
         %Compute the channel gain divided by the noise power (in dB)
         gainOverNoisedB_AP(:,k,n) = constantTerm - alpha*log10(distances) + shadowAPrealizations(k,:)' - noiseVariancedBm;

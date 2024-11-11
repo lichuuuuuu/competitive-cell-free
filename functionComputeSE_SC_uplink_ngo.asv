@@ -105,7 +105,7 @@ for k = 1:K
         SE_beta(k) = (1-tau_p/tau_c)/log(2) * ( exp(1/exponent1)*expint(1/exponent1) );
     end
     
-    %前半の処理からUEのループ→APのループという形に変更してUEとAPの総当たりにしている
+    
     %Consider the improved AP association where each UE served by the
     %AP that gives the highest SE
     if nargout > 1
@@ -150,7 +150,7 @@ if nargout > 1
     
     %Let each UE be served by the AP giving the highest SE, which is
     %different from the AP selection in [15]
-    %各UEに対して提供されるSEが最大となるAPを選択し、その結果をbestAP_improvedに保存
+    %各UEに対して、提供されるSEが最大となるAPを選択し、その結果をbestAP_improvedに保存
     [SE_improved,bestAP_improved] = max(SE_improved,[],2);
     
 end

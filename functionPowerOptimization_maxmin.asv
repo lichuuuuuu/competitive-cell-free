@@ -39,7 +39,6 @@ pBest = zeros(K,1);
 %Solve the max-min problem by bisection - iterate until the difference
 %between the lower and upper points in the interval is smaller than delta
 %rateLower と rateUpper の差がdeltaより大きい間は二分法探索が続けられる
-%中央から探索を始めて電力割り当ての最小値の上限を探っている感じ
 while norm(rateUpper - rateLower) > delta
     
     %Compute the midpoint of the line

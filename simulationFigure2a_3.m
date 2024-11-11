@@ -20,21 +20,26 @@ clear;
 %% Define simulation setup
 
 %Number of setups with random UE locations
-nbrOfSetups = 200;
+% nbrOfSetups = 200;
+nbrOfSetups = 1;
 
 %Number of channel realizations per setup
-nbrOfRealizations = 1000;
+% nbrOfRealizations = 1000;
+nbrOfRealizations = 1;
 
 %Number of APs in the cell-free network
+% L = 400;
 L = 400;
 
 %Number of BSs in the cellular network (cannot be changed)
 nbrBSs = 4;
 
 %Number of antennas at the 4 BSs
+% M = 100;
 M = 100;
 
 %Number of UEs in the network
+% K = 40;
 K = 40;
 
 %Number of antennas per AP

@@ -20,10 +20,12 @@ clear;
 %% Define simulation setup
 
 %Number of setups with random UE locations
-nbrOfSetups = 200;
+% nbrOfSetups = 200;
+nbrOfSetups = 100;
 
 %Number of channel realizations per setup
-nbrOfRealizations = 1000;
+% nbrOfRealizations = 1000;
+nbrOfRealizations = 10;
 
 %Number of APs in the cell-free network
 L = 100;
@@ -32,10 +34,12 @@ L = 100;
 nbrBSs = 4;
 
 %Number of antennas at the 4 BSs
-M = 100;
+% M = 100;
+M = 25;
 
 %Number of UEs in the network
-K = 40;
+% K = 40;
+K = 4;
 
 %Number of antennas per AP
 N = 4;
@@ -65,22 +69,26 @@ for n = 1:nbrOfSetups
     disp(['Setup ' num2str(n) ' out of ' num2str(nbrOfSetups)]);
     
     %Generate one setup with UEs at random locations
+    %ランダムなUEの位置でシステムのセットアップ(空間相関行列、パイロット割り当て、BSへのUE割り当て)を生成している
     [R_AP,R_BS,pilotIndex,BSassignment] = generateSetup(L,K,N,M,1);
-    
-    
+   
     %Generate channel realizations, channel estimates, and estimation
     %error correlation matrices for all UEs to the cell-free APs
+    %セルフリーmMIMOにおいて，与えられたシステム設定でチャネル行列とその推定，推定されたチャネルの空間相関行列を求める(推定の精度や効果を評価するために実際のチャネル行列も取得)
     [Hhat_AP,H_AP,B_AP] = functionChannelEstimates(R_AP,nbrOfRealizations,L,K,N,tau_p,pilotIndex,p);
     
     %Generate channel realizations, channel estimates, and estimation
     %error correlation matrices for all UEs to the cellular BSs
+    %セルラーmMIMOにおいて，与えられたシステム設定でチャネル行列とその推定，推定されたチャネルの空間相関行列を求める(推定の精度や効果を評価するために実際のチャネル行列も取得)
     [Hhat_BS,~,B_BS] = functionChannelEstimates(R_BS,nbrOfRealizations,nbrBSs,K,M,tau_p,pilotIndex,p);
     
 
     %Compute SE for the Cell-free mMIMO system with Monte Carlo simulations
+    %セルフリーmMIMOのシステムでスペクトル効率（SE）を計算
     [SE_AP_MR,SE_AP_MMSE] = functionComputeSE_AP_uplink(Hhat_AP,H_AP,R_AP,B_AP,tau_c,tau_p,nbrOfRealizations,N,K,L,p);
 
     %Compute SE for the Cellular mMIMO system with Monte Carlo simulations
+    %セルラーーmMIMOのシステムでスペクトル効率（SE）を計算
     [SE_BS_MR,SE_BS_RZF,SE_BS_MMMSE] = functionComputeSE_BS_uplink(Hhat_BS,R_BS,B_BS,BSassignment,tau_c,tau_p,nbrOfRealizations,M,K,nbrBSs,p);
 
     
@@ -98,6 +106,7 @@ end
 
 
 %% Plot simulation results
+% CDFのグラフ作成(複数の試行で得た全てのデータを活用してる)
 figure;
 hold on; box on;
 plot(sort(SE_BS_MMMSE_tot(:)),linspace(0,1,K*nbrOfSetups),'k-','LineWidth',2);

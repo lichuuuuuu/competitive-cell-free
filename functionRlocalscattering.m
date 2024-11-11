@@ -30,6 +30,7 @@ function R = functionRlocalscattering(M,theta,ASDdeg,antennaSpacing,distribution
 %use this code for research that results in publications, please cite our
 %monograph as described above.
 
+% 無線通信システムにおけるアンテナ配列の空間相関行列を3つ計算する
 
 %Set the antenna spacing if not specified by input
 if  nargin < 4
@@ -65,9 +66,11 @@ for column = 1:M
     if strcmp(distribution,'Gaussian')
         
         %Define integrand of (2.23)
+        %積分関数の定義
         F = @(Delta)exp(1i*2*pi*distance*sin(theta+Delta)).*exp(-Delta.^2/(2*ASD^2))/(sqrt(2*pi)*ASD);
         
         %Compute the integral in (2.23) by including 20 standard deviations
+        %積分の計算でガウス分布を仮定するアンテナ配列の空間相関を得る
         firstRow(column) = integral(F,-20*ASD,20*ASD);
         
         
@@ -75,11 +78,13 @@ for column = 1:M
     elseif strcmp(distribution,'Uniform')
         
         %Set the upper and lower limit of the uniform distribution
+        %一様分布の範囲設定
         limits = sqrt(3)*ASD;
         
         %Define integrand of (2.23)
+        %積分関数の定義
         F = @(Delta)exp(1i*2*pi*distance*sin(theta+Delta))/(2*limits);
-        
+        %積分の計算で一様角度分布を仮定した際のアンテナ間の相関を得る
         %Compute the integral in (2.23) over the entire interval
         firstRow(column) = integral(F,-limits,limits);
         
@@ -88,12 +93,15 @@ for column = 1:M
     elseif strcmp(distribution,'Laplace')
         
         %Set the scale parameter of the Laplace distribution
+        %ラプラス分布のスケールパラメータ設定
         LaplaceScale = ASD/sqrt(2);
         
         %Define integrand of (2.23)
+        %積分の定義
         F = @(Delta)exp(1i*2*pi*distance*sin(theta+Delta)).*exp(-abs(Delta)/LaplaceScale)/(2*LaplaceScale);
         
         %Compute the integral in (2.23) by including 20 standard deviations
+        %積分の計算でラプラス角度分布を仮定した際のアンテナ間の相関を得る
         firstRow(column) = integral(F,-20*ASD,20*ASD);
         
     end
@@ -101,4 +109,7 @@ for column = 1:M
 end
 
 %Compute the spatial correlation matrix by utilizing the Toeplitz structure
+%計算された firstRow ベクトルを使用して、空間相関行列 R を生成
 R = toeplitz(firstRow);
+%トポリッツ構造とは、行列の各行がその直前の行から一つの位置だけ右にシフトされた形になるというもの.
+%行列の各対角線上の要素が一定という特性を持つ

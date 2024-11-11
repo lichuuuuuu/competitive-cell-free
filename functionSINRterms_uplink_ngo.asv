@@ -51,7 +51,6 @@ function [signalCF,interferenceCF,signalSC,interferenceSC,signalSC2,interference
 
 
 %% Computations for Cell-free mMIMO
-%SINRの分子分母計算してるだけ
 
 %Compute the gamma parameters for all APs and UE according to (8) in [15]
 gammaVal = zeros(L,K);
@@ -69,6 +68,7 @@ signalCF = sum(gammaVal,1)';
 
 %Compute the interference terms in the denominator of (27) in [15] for all
 %UEs, neglecting the transmit powers
+%同一のパイロットを使用するUE間での干渉（パイロット汚染）を含む全干渉の合計が分母
 interferenceCF = zeros(K,K);
 
 for k = 1:K
@@ -84,7 +84,6 @@ for k = 1:K
     samePilot = find(coPilot);
     
     for ind = 1:length(samePilot)
-        %同一のパイロットを使用するUE間での干渉（パイロット汚染）を含む全干渉の合計が分母
         interferenceCF(samePilot(ind),k) = interferenceCF(samePilot(ind),k) + sum(gammaVal(:,k).*betaVal(:,samePilot(ind))./betaVal(:,k))^2 /noiseTerm;
     end
     
@@ -93,7 +92,7 @@ end
 
 
 %% Computations for Small cells - largest large-scale fading AP association
-%これもSINRの分子分母計算してるだけ
+
 %Compute the numerator of (48) in [15] for all UEs, divided by the noise
 %term and neglecting the transmit power 
 signalSC = zeros(K,1);
@@ -112,7 +111,6 @@ bestAP = zeros(K,1);
 for k = 1:K
     
     %Select the AP to serve UE k using (38) in [15]
-    %最も大きなパスロス値を持つAPを選択
     activeAPs = find(availableAPs);
     [~,ind] = max(betaVal(activeAPs,k));
     m_k = activeAPs(ind);
@@ -122,7 +120,6 @@ for k = 1:K
     availableAPs(m_k) = false;
     
     %Compute the signal and interference in (48), using (49)
-    %選択されたAPに基づいて、信号パワー（signalSC2）と干渉（interferenceSC2）を再計算
     Psi_tkl = (Pmax*tau_p*sum(betaVal(m_k,pilotIndexSC(k) == pilotIndexSC)) + 1);
     omega_mkk = Pmax*tau_p*(betaVal(m_k,k))^2 ./ Psi_tkl;
     
@@ -134,7 +131,7 @@ end
 
 
 %% Computations for Small cells - largest SINR AP association
-%これもSINRの分子分母計算してるだけ
+
 %Compute the numerator of (48) in [15] for all UEs, divided by the noise
 %term and neglecting the transmit power 
 signalSC2 = zeros(K,1);
@@ -168,7 +165,6 @@ for k = 1:K
     
     
     %Find the AP that gives the highest SINR with full power transmission
-    %最大のSINRを提供するAPを選択
     SINRs = signal./(sum(interf,1)'+1/Pmax);
     [~,selectAP] = max(SINRs);
     

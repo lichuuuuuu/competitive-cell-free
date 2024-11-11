@@ -100,7 +100,7 @@ for l = 1:L
         yp = sqrt(p)*tau_p*sum(H((l-1)*N+1:l*N,:,t==pilotIndex),3) + sqrt(tau_p)*Np(:,:,l,t);
         
         %Compute the matrix that is inverted in the MMSE estimator
-        %MMSEの計算に必要な共分散行列の逆行列PsiInvを求める
+        %MMSEの計算に必要な，共分散行列の逆行列PsiInvを求める
         %ユーザー機器（UE）のAP送信電力，パイロット信号の長さ，パイロット信号tを使用するUEのAPlに対する空間相関行列の合計の数列と単位行列の和
         PsiInv = (p*tau_p*sum(R(:,:,l,t==pilotIndex),4) + eyeN);
         
